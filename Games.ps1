@@ -3,7 +3,7 @@
 Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 
-# ========== Constants ========================================
+# ========== Variables ========================================
 
 $FontName = "Verdana"
 $FontSize = 9
@@ -15,19 +15,27 @@ $ListColor = [System.Drawing.Color]::Ivory
 $Padding = 10
 $SettingsFile = "$env:LOCALAPPDATA\PowerShellTools\Games\Settings.ini"
 
+$MB_List = @{
+    Ini_01 = "Konnte Datei {0} nicht finden."
+    Ini_02 = "Games: Fehler!"
+}
+
 # ========== Functions ========================================
 
 function Initialize-Me ([string]$FilePath)
     {
         If (!(Test-Path -Path $FilePath))
             {
-                [System.Windows.Forms.MessageBox]::Show("Konnte Datei `"$FilePath`" nicht finden.","Games: Fehler",0)
+                [System.Windows.Forms.MessageBox]::Show(($MB_List.Ini_01 -f $FilePath),$MB_List.Ini_02,0)
                 Exit
             }
 
         $Data = [array](Get-Content -Path $FilePath)
 
-        ForEach ($i in $Data) {$ht_Result += @{$i.Split("=")[0].Trim(" ") = $i.Split("=")[-1].Trim(" ")}}
+        ForEach ($i in $Data)
+            {
+                $ht_Result += @{$i.Split("=")[0].Trim() = $i.Split("=")[-1].Trim()}
+            }
 
         return $ht_Result
     }
